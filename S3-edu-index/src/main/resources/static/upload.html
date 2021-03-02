@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>Insert title here</title>
+</head>
+<body>
+<script src="https://cdn.jsdelivr.net/npm/vue/dist/vue.js"></script>
+<script
+	src="https://cdn.bootcdn.net/ajax/libs/axios/0.19.2/axios.min.js"></script>
+</body>
+<div id="ff">
+
+	<table>
+		<tbody>
+			<tr v-for="c in clist">
+				<td>
+				{{c.cid}}
+				</td>
+				<td>{{c.cname}}</td>
+				<td>{{c.credit}}</td>
+				<td>{{c.tname}}</td>
+			</tr>
+		</tbody>
+	</table>
+	<hr>
+	总个数:{{rows}}<br>
+	总页数：{{pageTotal}}
+	每页显示个数：{{pageSize}}<br>
+	<input type="button" value="上一页" @click="sub(-1)">
+	当前页数：{{pageNum}}
+	<input type="button" value="下一页" @click="sub(+1)">
+</div>
+<script type="text/javascript">
+	var v1 = new Vue({
+		el :"#ff",
+		data:{
+			clist:[],
+			rows:"3",//总条数
+			pageNum:1,//当前页码
+			pageTotal:1,//总页数
+			pageSize:2//每页条数
+		},
+		created(){
+			axios.get("getTotalNum").then(res=>{
+				this.rows = res.data;
+				var t = this.rows/this.pageSize;
+				this.pageTotal = Math.ceil(t);
+			}),
+			axios.get("home?pageNum=1&pageSize=2",).then(res=>{
+				this.clist = res.data;
+			})
+		},
+		methods:{
+			sub(value){
+				console.log(value);
+				this.pageNum += value;
+				if(this.pageNum<=1){
+					this.pageNum = 1;
+				}
+				if(this.pageNum>= this.pageTotal){
+					this.pageNum = this.pageTotal;
+				}
+				var p = new URLSearchParams();
+				p.append("pageNum",this.pageNum);
+				p.append("pageSize",this.pageSize);
+				axios.post("home",p).then(res=>{
+					this.clist = res.data;
+				})
+			}
+		}
+		
+	})
+
+
+</script>
+</html>

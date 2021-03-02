@@ -1,0 +1,11 @@
+spring:
+   application:
+      name: edu-student
+   cloud:
+     config:
+       uri: http://localhost:9000
+       #    分支
+       label: main   
+      
+
+        
